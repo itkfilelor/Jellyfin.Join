@@ -1,2 +1,2 @@
-# Emby.Plugins
-Plugins for Emby (http://emby.media)
+# Jellyfin Join Notifications
+
