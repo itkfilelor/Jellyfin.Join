@@ -7,13 +7,14 @@ using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Services;
-using Emby.Notification.Slack.Configuration;
 using System.Threading;
 using MediaBrowser.Model.Serialization;
+using Jellyfin.Notification.Join.Configuration;
 
-namespace Emby.Notification.Slack.Api
+
+namespace Jellyfin.Notification.Join.Api
 {
-    [Route("/Notification/Slack/Test/{UserID}", "POST", Summary = "Tests Slack Notification")]
+    [Route("/Notification/Join/Test/{UserID}", "POST", Summary = "Tests Join Notification")]
     public class TestNotification : IReturnVoid
     {
         [ApiMember(Name = "UserID", Description = "User Id", IsRequired = true, DataType = "string", ParameterType = "path", Verb = "GET")]
@@ -24,16 +25,14 @@ namespace Emby.Notification.Slack.Api
     {
         private readonly IHttpClient _httpClient;
         private readonly ILogger _logger;
-        private readonly IJsonSerializer _jsonSerializer;
 
-        public ServerApiEndpoints(ILogManager logManager, IHttpClient httpClient, IJsonSerializer jsonSerializer)
+        public ServerApiEndpoints(ILogManager logManager, IHttpClient httpClient)
         {
             _logger = logManager.GetLogger(GetType().Name);
             _httpClient = httpClient;
-            _jsonSerializer = jsonSerializer;
         }
 
-        private SlackPluginOptions GetOptions(String userID)
+        private JoinPluginOptions GetOptions(String userID)
         {
             return Plugin.Instance.Configuration.Options
                 .FirstOrDefault(i => string.Equals(i.MediaBrowserUserId, userID, StringComparison.OrdinalIgnoreCase));
@@ -49,22 +48,25 @@ namespace Emby.Notification.Slack.Api
         {
             var options = GetOptions(request.UserID);
 
-            var slackMessage = new SlackMessage { channel = options.Channel, icon_emoji = options.Emoji, username = options.UserName, text = "This is a test notification from Emby" };
+            var message = new Dictionary<string, string> {
+                { "apikey", options.ApiKey },
+                { "deviceId", options.DeviceId },
+                { "icon", Plugin.Instance.IconURL.ToString() },
+                { "title", "Test Message" },
+                { "text", "This is a test from Jellyfin." }
+            };
 
-            var parameters = new Dictionary<string, string> { };
-            parameters.Add("payload", _jsonSerializer.SerializeToString(slackMessage));
-
-            _logger.Debug("Slack <TEST> to {0}", options.Channel);
+            
+            _logger.Debug("Join Notification <TEST> to {0}", options.DeviceId);
 
             var httpRequestOptions = new HttpRequestOptions
             {
-                Url = options.SlackWebHookURI,
+                Url = Plugin.Instance.ApiV1Endpoint + Plugin.Instance.ToQueryString(message),
                 CancellationToken = CancellationToken.None
             };
 
-            httpRequestOptions.SetPostData(parameters);
 
-            using (await _httpClient.Post(httpRequestOptions).ConfigureAwait(false))
+            using (await _httpClient.Get(httpRequestOptions).ConfigureAwait(false))
             {
 
             }

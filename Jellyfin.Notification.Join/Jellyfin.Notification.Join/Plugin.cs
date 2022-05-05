@@ -5,7 +5,7 @@ using System.Net;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Model.Serialization;
-using Emby.Notification.Join.Configuration;
+using Jellyfin.Notification.Join.Configuration;
 using MediaBrowser.Model.Plugins;
 
 namespace Emby.Notification.Join

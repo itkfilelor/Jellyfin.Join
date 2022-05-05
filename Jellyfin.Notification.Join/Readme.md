@@ -1,6 +1,6 @@
-# Emby.Notification.Join
+# Jellyfin.Notification.Join
 
-Plugin to send Emby notifications to Join by JoaoApps (https://joaoapps.com/join/)
+Plugin to send Jellyfin notifications to Join by JoaoApps (https://joaoapps.com/join/)
 
 Setup instructions:
 1. Download Join from either the Google Play or iOS App Stores

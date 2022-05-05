@@ -9,9 +9,9 @@ using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Notifications;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Serialization;
-using Emby.Notification.Join.Configuration;
+using Jellyfin.Notification.Join.Configuration;
 
-namespace Emby.Notification.Join
+namespace Jellyfin.Notification.Join
 {
     public class JoinNotifier : INotificationService
     {
@@ -54,7 +54,7 @@ namespace Emby.Notification.Join
             };
 
             if (string.IsNullOrEmpty(request.Description)) {
-                message.Add("title", "Emby");
+                message.Add("title", "Jellyfin");
                 message.Add("text", request.Name);
             } else {
                 message.Add("title", request.Name);
